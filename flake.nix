@@ -68,7 +68,7 @@
 
           meta = with pkgs.lib; {
             description = "COSMIC applet for displaying current Spotify track";
-            homepage = "https://github.com/yourusername/cosmic-applet-spotify";
+            homepage = "https://github.com/nomoth/cosmic-applet-spotify";
             license = licenses.mit;
             maintainers = [ ];
             platforms = platforms.linux;

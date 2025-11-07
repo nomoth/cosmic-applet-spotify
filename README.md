@@ -66,7 +66,7 @@ chmod +x ~/.local/bin/cosmic-applet-spotify
 
 ## License
 
-GPL-3.0-only
+MIT
 
 ## Credits
 
