@@ -48,13 +48,7 @@
 
           inherit src;
 
-          cargoLock = {
-            lockFile = ./Cargo.lock;
-            outputHashes = {
-              # Les hashes seront générés après le premier build
-              # Si libcosmic n'est pas dans le lock, ils seront ajoutés automatiquement
-            };
-          };
+          cargoHash = "sha256-aS9o9sxamONfuBhlkj7pwjGMQ8O3S9qdVmw5x5mbNAg=";
 
           inherit nativeBuildInputs buildInputs;
 
@@ -62,7 +56,7 @@
           LIBCLANG_PATH = "${pkgs.llvmPackages.libclang.lib}/lib";
 
           postInstall = ''
-            install -Dm644 cosmic-applet-spotify.desktop \
+            install -Dm644 data/cosmic-applet-spotify.desktop \
               $out/share/applications/cosmic-applet-spotify.desktop
           '';
 

@@ -14,7 +14,7 @@ libcosmic = { git = "https://github.com/pop-os/libcosmic", default-features = fa
   "tokio",
   "wayland",
 ] }
-tokio = { version = "1.41", features = ["full"] }
+tokio = { version = "1.41", features = ["time"] }
 async-stream = "0.3"
 mpris = "2.0"
 tracing = "0.1"
