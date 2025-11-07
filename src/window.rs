@@ -96,7 +96,7 @@ impl cosmic::Application for Window {
             std::any::TypeId::of::<SpotifyWorker>(),
             async_stream::stream! {
                 loop {
-                    // Tentative de connexion et récupération des infos
+                    // Try to connect and retrieve track info
                     let track_info = {
                         match PlayerFinder::new() {
                             Ok(finder) => {
@@ -111,7 +111,7 @@ impl cosmic::Application for Window {
 
                     yield Message::UpdateTrack(track_info);
 
-                    // Attente avant la prochaine mise à jour
+                    // Wait before next update
                     time::sleep(Duration::from_millis(500)).await;
                 }
             },
@@ -127,11 +127,11 @@ fn get_track_info(player: &Player) -> Option<TrackInfo> {
     let metadata = player.get_metadata().ok()?;
     let status = player.get_playback_status().ok()?;
 
-    let title = metadata.title().unwrap_or("Titre inconnu").to_string();
+    let title = metadata.title().unwrap_or("Unknown Title").to_string();
     let artist = metadata
         .artists()
         .and_then(|a| a.first().map(|s| &**s))
-        .unwrap_or("Artiste inconnu")
+        .unwrap_or("Unknown Artist")
         .to_string();
 
     let status_text = match status {

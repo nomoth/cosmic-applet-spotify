@@ -1,35 +1,35 @@
 #!/usr/bin/env bash
-# Script d'installation pour cosmic-applet-spotify
+# Installation script for cosmic-applet-spotify
 
 set -e
 
-echo "🚀 Installation de cosmic-applet-spotify"
+echo "🚀 Installing cosmic-applet-spotify"
 echo ""
 
-# Vérifier que le binaire existe
+# Check if binary exists
 if [ ! -f "target/release/cosmic-applet-spotify" ]; then
-    echo "❌ Binaire non trouvé. Compilation en cours..."
+    echo "❌ Binary not found. Building..."
     cargo build --release
 fi
 
-# Créer les répertoires nécessaires
+# Create necessary directories
 mkdir -p ~/.local/bin
 mkdir -p ~/.local/share/applications
 
-# Copier les fichiers
-echo "📦 Copie des fichiers..."
+# Copy files
+echo "📦 Copying files..."
 cp target/release/cosmic-applet-spotify ~/.local/bin/
 cp cosmic-applet-spotify.desktop ~/.local/share/applications/
 
-# Rendre le binaire exécutable
+# Make binary executable
 chmod +x ~/.local/bin/cosmic-applet-spotify
 
 echo ""
-echo "✅ Installation terminée !"
+echo "✅ Installation complete!"
 echo ""
-echo "Pour utiliser l'applet :"
-echo "1. Redémarrer le panneau COSMIC : cosmic-panel restart"
-echo "2. Aller dans Paramètres → Panneau → Applets"
-echo "3. Ajouter 'Spotify Player' au panneau"
+echo "To use the applet:"
+echo "1. Restart COSMIC panel: cosmic-panel restart"
+echo "2. Go to Settings → Panel → Applets"
+echo "3. Add 'Spotify Player' to the panel"
 echo ""
-echo "Note : Spotify doit être lancé pour que l'applet fonctionne."
+echo "Note: Spotify must be running for the applet to work."

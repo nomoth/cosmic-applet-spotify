@@ -20,7 +20,7 @@
           extensions = [ "rust-src" "rust-analyzer" ];
         };
 
-        # Seulement les fichiers nécessaires pour la compilation
+        # Only necessary files for compilation
         src = pkgs.lib.sourceByRegex ./. [
           "^Cargo\\.toml$"
           "^Cargo\\.lock$"
@@ -48,16 +48,22 @@
 
           inherit src;
 
-          cargoHash = "sha256-aS9o9sxamONfuBhlkj7pwjGMQ8O3S9qdVmw5x5mbNAg=";
+          cargoHash = "sha256-lXbSYFKP3CCej7neLz/CmLiTPvG4edbdxFDxCHVSvME=";
 
           inherit nativeBuildInputs buildInputs;
 
-          # Variables d'environnement pour la compilation
+          # Environment variables for compilation
           LIBCLANG_PATH = "${pkgs.llvmPackages.libclang.lib}/lib";
 
           postInstall = ''
             install -Dm644 data/cosmic-applet-spotify.desktop \
               $out/share/applications/cosmic-applet-spotify.desktop
+
+            install -Dm644 data/icons/scalable/apps/cosmic-applet-spotify.svg \
+              $out/share/icons/hicolor/scalable/apps/cosmic-applet-spotify.svg
+
+            ln -sf cosmic-applet-spotify.svg \
+              $out/share/icons/hicolor/scalable/apps/spotify.svg
           '';
 
           meta = with pkgs.lib; {
@@ -73,13 +79,13 @@
           inherit buildInputs;
 
           nativeBuildInputs = nativeBuildInputs ++ (with pkgs; [
-            # Outils de développement supplémentaires
+            # Additional development tools
             rust-analyzer
             clippy
             rustfmt
           ]);
 
-          # Variables d'environnement pour le développement
+          # Environment variables for development
           RUST_SRC_PATH = "${rustToolchain}/lib/rustlib/src/rust/library";
           LIBCLANG_PATH = "${pkgs.llvmPackages.libclang.lib}/lib";
           LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath buildInputs;
@@ -87,21 +93,21 @@
             "${pkgs.wayland}/lib/pkgconfig:${pkgs.libxkbcommon}/lib/pkgconfig";
 
           shellHook = ''
-            echo "🚀 Environnement de développement COSMIC Spotify Applet"
-            echo "Commandes disponibles:"
-            echo "  cargo build          - Compiler en mode debug"
-            echo "  cargo build --release - Compiler en mode release"
-            echo "  cargo run            - Lancer l'applet"
-            echo "  cargo clippy         - Vérifier le code"
-            echo "  cargo fmt            - Formater le code"
+            echo "🚀 COSMIC Spotify Applet Development Environment"
+            echo "Available commands:"
+            echo "  cargo build           - Build in debug mode"
+            echo "  cargo build --release - Build in release mode"
+            echo "  cargo run             - Run the applet"
+            echo "  cargo clippy          - Check the code"
+            echo "  cargo fmt             - Format the code"
             echo ""
-            echo "Variables d'environnement configurées:"
+            echo "Environment variables configured:"
             echo "  WAYLAND_DISPLAY: $WAYLAND_DISPLAY"
-            echo "  LD_LIBRARY_PATH configuré avec wayland, libxkbcommon, etc."
+            echo "  LD_LIBRARY_PATH configured with wayland, libxkbcommon, etc."
           '';
         };
 
-        # Pour NixOS, module d'installation système
+        # NixOS module for system-wide installation
         nixosModules.default = { config, lib, pkgs, ... }:
           with lib;
           let cfg = config.programs.cosmic-applet-spotify;
@@ -119,7 +125,7 @@
             config = mkIf cfg.enable {
               environment.systemPackages = [ cfg.package ];
 
-              # S'assurer que D-Bus est disponible
+              # Ensure D-Bus is available
               services.dbus.enable = true;
             };
           };
