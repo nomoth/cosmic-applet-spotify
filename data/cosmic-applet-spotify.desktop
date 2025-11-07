@@ -1,0 +1,16 @@
+[Desktop Entry]
+Name=Spotify Player
+Name[fr]=Lecteur Spotify
+Comment=Display current Spotify track
+Comment[fr]=Affiche la piste Spotify en cours
+Type=Application
+Exec=/home/nomoth/dev/cosmic-applet-spotify/target/release/cosmic-applet-spotify
+Terminal=false
+Categories=COSMIC;
+Keywords=COSMIC;Spotify;Music;Media;
+Icon=spotify
+NoDisplay=true
+X-CosmicApplet=true
+X-HostWaylandDisplay=true
+X-CosmicHoverPopup=Auto
+X-OverflowPriority=50
