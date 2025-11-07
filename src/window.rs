@@ -9,6 +9,8 @@ use std::time::Duration;
 use tokio::time;
 
 const APP_ID: &str = "com.github.cosmic-applet-spotify";
+const POLL_INTERVAL_MS: u64 = 500;
+
 static AUTOSIZE_MAIN_ID: LazyLock<id::Id> = LazyLock::new(|| id::Id::new(APP_ID));
 
 #[derive(Debug, Clone)]
@@ -84,22 +86,24 @@ impl cosmic::Application for Window {
             async_stream::stream! {
                 loop {
                     // Try to connect and retrieve track info
-                    let track_info = {
-                        match PlayerFinder::new() {
-                            Ok(finder) => {
-                                match finder.find_by_name("Spotify") {
-                                    Ok(player) => get_track_info(&player),
-                                    Err(_) => None,
-                                }
+                    let track_info = match PlayerFinder::new() {
+                        Ok(finder) => match finder.find_by_name("Spotify") {
+                            Ok(player) => get_track_info(&player),
+                            Err(e) => {
+                                tracing::debug!("Spotify not found: {}", e);
+                                None
                             }
-                            Err(_) => None,
+                        }
+                        Err(e) => {
+                            tracing::debug!("MPRIS error: {}", e);
+                            None
                         }
                     };
 
                     yield Message::UpdateTrack(track_info);
 
                     // Wait before next update
-                    time::sleep(Duration::from_millis(500)).await;
+                    time::sleep(Duration::from_millis(POLL_INTERVAL_MS)).await;
                 }
             },
         )
