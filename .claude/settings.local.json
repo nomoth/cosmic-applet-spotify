@@ -3,7 +3,8 @@
     "allow": [
       "Read(//tmp/cosmic-applets/cosmic-applet-time/**)",
       "Read(//tmp/cosmic-applets/**)",
-      "Bash(journalctl:*)"
+      "Bash(journalctl:*)",
+      "Bash(readlink:*)"
     ],
     "deny": [],
     "ask": []

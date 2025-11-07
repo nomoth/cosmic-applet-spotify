@@ -28,7 +28,12 @@
           "^data(/.*)?$"
         ];
 
-        nativeBuildInputs = with pkgs; [ rustToolchain pkg-config cmake ];
+        nativeBuildInputs = with pkgs; [
+          rustToolchain
+          pkg-config
+          cmake
+          makeWrapper
+        ];
 
         buildInputs = with pkgs; [
           expat
@@ -64,6 +69,14 @@
 
             ln -sf cosmic-applet-spotify.svg \
               $out/share/icons/hicolor/scalable/apps/spotify.svg
+
+            # Wrap binary to ensure wayland libraries are found at runtime
+            wrapProgram $out/bin/cosmic-applet-spotify \
+              --prefix LD_LIBRARY_PATH : ${pkgs.lib.makeLibraryPath [
+                pkgs.wayland
+                pkgs.libGL
+                pkgs.libxkbcommon
+              ]}
           '';
 
           meta = with pkgs.lib; {
