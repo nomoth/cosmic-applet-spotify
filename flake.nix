@@ -11,7 +11,7 @@
   };
 
   outputs = { self, nixpkgs, flake-utils, rust-overlay }:
-    flake-utils.lib.eachDefaultSystem (system:
+    (flake-utils.lib.eachDefaultSystem (system:
       let
         overlays = [ (import rust-overlay) ];
         pkgs = import nixpkgs { inherit system overlays; };
@@ -106,7 +106,7 @@
             echo "  LD_LIBRARY_PATH configured with wayland, libxkbcommon, etc."
           '';
         };
-
+      })) // {
         # NixOS module for system-wide installation
         nixosModules.default = { config, lib, pkgs, ... }:
           with lib;
@@ -117,7 +117,7 @@
 
               package = mkOption {
                 type = types.package;
-                default = self.packages.${system}.default;
+                default = self.packages.${pkgs.system}.default;
                 description = "The cosmic-applet-spotify package to use";
               };
             };
@@ -129,5 +129,5 @@
               services.dbus.enable = true;
             };
           };
-      });
+      };
 }
