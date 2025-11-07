@@ -74,17 +74,11 @@ impl cosmic::Application for Window {
             "⏸".to_string()
         };
 
-        let suggested_size = self.core.applet.suggested_size(true);
         let suggested_padding = self.core.applet.suggested_padding(true);
 
-        let button = cosmic::widget::button::custom(
-            self.core
-                .applet
-                .text(content)
-                .size(suggested_size.0 as f32)
-        )
-        .padding([0, suggested_padding])
-        .class(cosmic::theme::Button::AppletIcon);
+        let button = cosmic::widget::button::custom(self.core.applet.text(content))
+            .padding([0, suggested_padding])
+            .class(cosmic::theme::Button::AppletIcon);
 
         autosize(button, AUTOSIZE_MAIN_ID.clone()).into()
     }
