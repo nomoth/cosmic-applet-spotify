@@ -20,7 +20,7 @@ pub enum Message {
 pub struct TrackInfo {
     pub title: String,
     pub artist: String,
-    pub status: String,
+    pub is_playing: bool,
 }
 
 pub struct Window {
@@ -61,17 +61,10 @@ impl cosmic::Application for Window {
 
     fn view(&self) -> Element<'_, Self::Message> {
         let content = if let Some(track) = &self.current_track {
-            let icon = if track.status.contains("Playing") {
-                "♫"
-            } else if track.status.contains("Paused") {
-                "⏸"
-            } else {
-                "⏹"
-            };
-
+            let icon = if track.is_playing { "♫" } else { "‖" };
             format!("{} {} - {}", icon, track.artist, track.title)
         } else {
-            "⏸".to_string()
+            "‖".to_string()
         };
 
         let suggested_padding = self.core.applet.suggested_padding(true);
@@ -128,15 +121,11 @@ fn get_track_info(player: &Player) -> Option<TrackInfo> {
         .unwrap_or("Unknown Artist")
         .to_string();
 
-    let status_text = match status {
-        PlaybackStatus::Playing => "▶ Playing",
-        PlaybackStatus::Paused => "⏸  Paused",
-        PlaybackStatus::Stopped => "⏹  Stopped",
-    };
+    let is_playing = matches!(status, PlaybackStatus::Playing);
 
     Some(TrackInfo {
         title,
         artist,
-        status: status_text.to_string(),
+        is_playing,
     })
 }
