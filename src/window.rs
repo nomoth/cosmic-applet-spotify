@@ -10,6 +10,7 @@ use tokio::time;
 
 const APP_ID: &str = "com.github.cosmic-applet-spotify";
 const POLL_INTERVAL_MS: u64 = 500;
+const POLL_INTERVAL_NO_SPOTIFY_MS: u64 = 2000;
 
 static AUTOSIZE_MAIN_ID: LazyLock<id::Id> = LazyLock::new(|| id::Id::new(APP_ID));
 
@@ -62,20 +63,20 @@ impl cosmic::Application for Window {
     }
 
     fn view(&self) -> Element<'_, Self::Message> {
-        let content = if let Some(track) = &self.current_track {
+        if let Some(track) = &self.current_track {
             let icon = if track.is_playing { "♫" } else { "‖" };
-            format!("{} {} - {}", icon, track.artist, track.title)
+            let content = format!("{} {} - {}", icon, track.artist, track.title);
+            let suggested_padding = self.core.applet.suggested_padding(true);
+
+            let button = cosmic::widget::button::custom(self.core.applet.text(content))
+                .padding([0, suggested_padding])
+                .class(cosmic::theme::Button::AppletIcon);
+
+            autosize(button, AUTOSIZE_MAIN_ID.clone()).into()
         } else {
-            "‖".to_string()
-        };
-
-        let suggested_padding = self.core.applet.suggested_padding(true);
-
-        let button = cosmic::widget::button::custom(self.core.applet.text(content))
-            .padding([0, suggested_padding])
-            .class(cosmic::theme::Button::AppletIcon);
-
-        autosize(button, AUTOSIZE_MAIN_ID.clone()).into()
+            // Return empty widget when Spotify is not running
+            cosmic::widget::horizontal_space().into()
+        }
     }
 
     fn subscription(&self) -> Subscription<Self::Message> {
@@ -100,10 +101,15 @@ impl cosmic::Application for Window {
                         }
                     };
 
-                    yield Message::UpdateTrack(track_info);
+                    yield Message::UpdateTrack(track_info.clone());
 
-                    // Wait before next update
-                    time::sleep(Duration::from_millis(POLL_INTERVAL_MS)).await;
+                    // Use slower polling when Spotify is not running
+                    let interval = if track_info.is_some() {
+                        POLL_INTERVAL_MS
+                    } else {
+                        POLL_INTERVAL_NO_SPOTIFY_MS
+                    };
+                    time::sleep(Duration::from_millis(interval)).await;
                 }
             },
         )
